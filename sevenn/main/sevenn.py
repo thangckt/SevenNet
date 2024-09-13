@@ -4,8 +4,10 @@ import sys
 
 import torch.distributed as dist
 
-import sevenn._keys as KEY
 from sevenn import __version__
+
+# import sevenn._keys as KEY
+from sevenn import _keys as KEY
 from sevenn.parse_input import read_config_yaml
 from sevenn.scripts.train import train
 from sevenn.sevenn_logger import Logger
