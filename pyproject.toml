@@ -1,6 +1,6 @@
 [project]
 name = "sevenn"
-version = "0.9.5"
+version = "0.10.0"
 authors = [
     { name = "Yutack Park", email = "parkyutack@snu.ac.kr" },
     { name = "Jaesun Kim" },
@@ -54,11 +54,14 @@ sevenn = [
     "presets/*.yaml",
     "pretrained_potentials/SevenNet_0__11July2024/checkpoint_sevennet_0.pth",
     "pretrained_potentials/SevenNet_0__22May2024/checkpoint_sevennet_0.pth",
+    "py.typed",
 ]
 
 [tool.setuptools.packages.find]
 include = ["sevenn*"]
-exclude = ["tests*", "example_inputs*"]
+exclude = ["tests*", "example_inputs*", ]
 
-[tool.ruff.format]
-quote-style = 'preserve'
+[tool.pytest.ini_options]
+log_cli = true
+log_cli_format = "%(asctime)s [%(levelname)8s] %(message)s (%(filename)s:%(lineno)s)"
+log_cli_date_format = "%Y-%m-%d %H:%M:%S"
