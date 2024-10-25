@@ -40,25 +40,23 @@ class Trainer:
         optimizer_args: Optional[dict] = None,
         scheduler_cls=None,
         scheduler_args: Optional[dict] = None,
-        device: Union[torch.device, str] = 'auto',
+        device: Union[torch.device, str] = "auto",
         distributed: bool = False,
-        distributed_backend: str = 'nccl',
+        distributed_backend: str = "nccl",
     ):
-        if device == 'auto':
-            device = 'cuda' if torch.cuda.is_available() else 'cpu'
-            if distributed_backend == 'mpi':
-                device = 'cpu'
+        if device == "auto":
+            device = "cuda" if torch.cuda.is_available() else "cpu"
 
         if distributed:
-            local_rank = int(os.environ['LOCAL_RANK'])
+            local_rank = int(os.environ["LOCAL_RANK"])
             self.rank = local_rank
-            if distributed_backend == 'nccl':
-                device = torch.device('cuda', local_rank)
+            if distributed_backend == "nccl":
+                device = torch.device("cuda", local_rank)
                 self.model = DDP(model.to(device), device_ids=[device])
-            elif distributed_backend == 'mpi':
+            elif distributed_backend == "mpi" or distributed_backend == "gloo":
                 self.model = DDP(model.to(device))
             else:
-                raise ValueError(f'Unknown DDP backend: {distributed_backend}')
+                raise ValueError(f"Unknown DDP backend: {distributed_backend}")
             dist.barrier()
             self.model.module.set_is_batch_data(True)
         else:
@@ -78,7 +76,7 @@ class Trainer:
         self.loss_functions = loss_functions
 
     @staticmethod
-    def from_config(model: torch.nn.Module, config: Dict[str, Any]) -> 'Trainer':
+    def from_config(model: torch.nn.Module, config: Dict[str, Any]) -> "Trainer":
         trainer = Trainer(
             model,
             loss_functions=get_loss_functions_from_config(config),
@@ -88,7 +86,7 @@ class Trainer:
             scheduler_args=config[KEY.SCHEDULER_PARAM],
             device=config[KEY.DEVICE],
             distributed=config[KEY.IS_DDP],
-            distributed_backend=config[KEY.DDP_BACKEND]
+            distributed_backend=config[KEY.DDP_BACKEND],
         )
         return trainer
 
@@ -118,15 +116,15 @@ class Trainer:
 
         return (
             {
-                'model': model,
-                'loss_functions': loss_functions,
-                'optimizer_cls': optimizer_cls,
-                'optimizer_args': config[KEY.OPTIM_PARAM],
-                'scheduler_cls': scheduler_cls,
-                'scheduler_args': config[KEY.SCHEDULER_PARAM],
+                "model": model,
+                "loss_functions": loss_functions,
+                "optimizer_cls": optimizer_cls,
+                "optimizer_args": config[KEY.OPTIM_PARAM],
+                "scheduler_cls": scheduler_cls,
+                "scheduler_args": config[KEY.SCHEDULER_PARAM],
             },
-            cp['optimizer_state_dict'],
-            cp['scheduler_state_dict'],
+            cp["optimizer_state_dict"],
+            cp["scheduler_state_dict"],
         )
 
     def run_one_epoch(
@@ -179,7 +177,7 @@ class Trainer:
             self.scheduler.step()
 
     def get_lr(self) -> float:
-        return float(self.optimizer.param_groups[0]['lr'])
+        return float(self.optimizer.param_groups[0]["lr"])
 
     def recorder_all_reduce(self, recorder: ErrorRecorder) -> None:
         for metric in recorder.metrics:
@@ -192,9 +190,9 @@ class Trainer:
         else:
             model_state_dct = self.model.state_dict()
         return {
-            'model_state_dict': model_state_dct,
-            'optimizer_state_dict': self.optimizer.state_dict(),
-            'scheduler_state_dict': self.scheduler.state_dict()
+            "model_state_dict": model_state_dct,
+            "optimizer_state_dict": self.optimizer.state_dict(),
+            "scheduler_state_dict": self.scheduler.state_dict()
             if self.scheduler is not None
             else None,
         }
