@@ -55,7 +55,7 @@ def main(args=None):
         os.makedirs(working_dir, exist_ok=True)
 
     if distributed:
-        if distributed_backend == "nccl":
+        if distributed_backend == "nccl" or distributed_backend == "gloo":
             local_rank = int(os.environ["LOCAL_RANK"])
             rank = int(os.environ["RANK"])
             world_size = int(os.environ["WORLD_SIZE"])
@@ -63,14 +63,13 @@ def main(args=None):
             local_rank = int(os.environ["OMPI_COMM_WORLD_LOCAL_RANK"])
             rank = int(os.environ["OMPI_COMM_WORLD_RANK"])
             world_size = int(os.environ["OMPI_COMM_WORLD_SIZE"])
-        elif distributed_backend == "gloo":
-            rank = int(os.environ["RANK"])
-            world_size = int(os.environ["WORLD_SIZE"])
         else:
             raise ValueError(f"Unknown distributed backend: {distributed_backend}")
 
         dist.init_process_group(
-            backend=distributed_backend, world_size=world_size, rank=rank
+            backend=distributed_backend,
+            world_size=world_size,
+            rank=rank,
         )
     else:
         local_rank, rank, world_size = 0, 0, 1
