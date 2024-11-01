@@ -1,6 +1,6 @@
 [project]
 name = "sevenn"
-version = "0.10.0"
+version = "0.10.1"
 authors = [
     { name = "Yutack Park", email = "parkyutack@snu.ac.kr" },
     { name = "Jaesun Kim" },
@@ -23,7 +23,7 @@ dependencies = [
     "e3nn",
     "tqdm",
     "scikit-learn",
-    "torch_geometric",
+    "torch_geometric>=2.5.0",
     "numpy<2.0",
 ]
 
