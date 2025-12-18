@@ -1,5 +1,5 @@
 default_language_version:
-  python: python3.9
+  python: python3.12
 
 ci:
   autoupdate_schedule: quarterly
@@ -15,11 +15,11 @@ repos:
       - id: check-useless-excludes
 
   - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v5.0.0
+    rev: v6.0.0
     hooks:
       - id: check-added-large-files
       - id: check-ast
-      - id: check-byte-order-marker
+      - id: fix-byte-order-marker
       - id: check-builtin-literals
       - id: check-case-conflict
       - id: check-docstring-first
@@ -42,7 +42,7 @@ repos:
       - id: seed-isort-config
 
   - repo: https://github.com/PyCQA/isort
-    rev: 6.0.1
+    rev: 6.1.0
     hooks:
       - id: isort
         exclude: 'sevenn/pair_e3gnn/pair_e3gnn.cpp'
